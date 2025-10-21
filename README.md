@@ -20,6 +20,39 @@ ofibowlidg/
 - Interfaz totalmente en español y con branding de ID Global Solutions.
 - Preparado para despliegues rápidos en Vercel (frontend) y Railway (backend + PostgreSQL).
 
+## Guía express: descargar, subir a GitHub y desplegar
+
+Si solo quieres tomar el código tal cual, subirlo a tu cuenta de GitHub y después desplegar el frontend en Vercel (manteniendo el backend listo para Railway), sigue estos pasos resumidos:
+
+1. **Descargar el proyecto**
+   - En GitHub (o desde este entorno) haz clic en **Code → Download ZIP** o clona el repositorio con `git clone`.
+   - Descomprime el ZIP (si aplica) y verifica que conserva la carpeta raíz `ofibowlidg/` con `frontend/` y `backend/` adentro.
+
+2. **Crear tu repositorio en GitHub**
+   - Inicia sesión en tu cuenta, pulsa **New repository** y nómbralo como prefieras (por ejemplo, `ofibowlidg`).
+   - Sube todos los archivos descargados usando la opción de arrastrar y soltar carpetas en el navegador o, si prefieres Git, ejecuta:
+     ```bash
+     git init
+     git add .
+     git commit -m "Subir proyecto OfiBowlIDG"
+     git branch -M main
+     git remote add origin https://github.com/tu-usuario/ofibowlidg.git
+     git push -u origin main
+     ```
+
+3. **Configurar variables de entorno en GitHub (opcional pero recomendado)**
+   - En la sección **Settings → Secrets and variables → Actions** añade tus variables `DATABASE_URL` y `JWT_SECRET` si planeas ejecutar flujos CI/CD que las necesiten.
+
+4. **Desplegar el frontend en Vercel**
+   - Entra a [vercel.com](https://vercel.com), pulsa **New Project → Import Git Repository** y selecciona tu repo.
+   - Al detectar la carpeta `frontend/`, Vercel usará el framework Vite automáticamente. Configura la variable `VITE_API_URL` apuntando a tu backend (por ahora puede ser la URL local o la que tengas en Railway).
+   - Haz clic en **Deploy** y espera a que finalice la construcción. Obtendrás una URL pública para compartir.
+
+5. **Desplegar el backend (Railway o servidor propio)**
+   - Aunque Vercel solo aloja el frontend, necesitas que el backend esté en Railway (o en otro servidor Node.js con PostgreSQL). Sigue la sección [Despliegue en Railway](#despliegue-en-railway) más abajo para completar este paso.
+
+Con esto habrás subido el código a tu GitHub y tendrás el frontend en Vercel sin pasos extra. Cuando quieras actualizar el proyecto, solo modifica tus archivos locales, haz `git commit` y `git push`; Vercel redeplegará automáticamente.
+
 ## Requisitos previos
 
 - Node.js 18+
