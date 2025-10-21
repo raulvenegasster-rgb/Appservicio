@@ -26,6 +26,22 @@ ofibowlidg/
 - PostgreSQL 14+
 - Cuenta en Vercel y Railway (opcional para despliegue en la nube).
 
+## Ejecución rápida con Docker Compose
+
+Si prefieres evitar instalaciones manuales, puedes levantar toda la pila (PostgreSQL, API y frontend) con un solo comando utilizando Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Esto dejará disponibles los servicios en:
+
+- Frontend: http://localhost:5173
+- API: http://localhost:4000/api
+- PostgreSQL: localhost:5432 (usuario `ofibowl`, contraseña `ofibowl`, base `ofibowlidg`)
+
+La base de datos se inicializa automáticamente con el esquema definido en `backend/prisma/schema.sql`. Para detener los servicios ejecuta `docker compose down`. Los datos persistirán en el volumen `db-data` mientras no lo elimines (`docker compose down -v`).
+
 ## Configuración del backend
 
 1. Copia el archivo de variables de entorno:
@@ -36,9 +52,12 @@ ofibowlidg/
 2. Ajusta los valores de `.env`:
    ```env
    PORT=4000
-   DATABASE_URL=postgres://usuario:password@host:5432/ofibowlidg
-   JWT_SECRET=tu_secreto
-   ```
+    DATABASE_URL=postgres://usuario:password@host:5432/ofibowlidg
+    JWT_SECRET=tu_secreto
+    CORS_ALLOWED_ORIGINS=http://localhost:5173
+    CORS_ALLOW_CREDENTIALS=false
+    ```
+   - Puedes listar varios orígenes separados por comas y, si requieres enviar cookies, cambia `CORS_ALLOW_CREDENTIALS` a `true`.
 3. Inicializa la base de datos ejecutando el script `schema.sql` en tu instancia PostgreSQL:
    ```bash
    psql "$DATABASE_URL" -f prisma/schema.sql

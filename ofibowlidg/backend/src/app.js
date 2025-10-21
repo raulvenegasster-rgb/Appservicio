@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
 import picksRoutes from './routes/picks.routes.js';
 import gamesRoutes from './routes/games.routes.js';
@@ -11,7 +12,24 @@ import { pool } from './db/pool.js';
 
 const app = express();
 
-app.use(cors({ origin: '*', credentials: true }));
+dotenv.config();
+
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
+  ? process.env.CORS_ALLOWED_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : ['*'];
+
+if (allowedOrigins.length === 0) {
+  allowedOrigins.push('*');
+}
+
+const allowAllOrigins = allowedOrigins.includes('*');
+
+app.use(
+  cors({
+    origin: allowAllOrigins ? '*' : allowedOrigins,
+    credentials: !allowAllOrigins && process.env.CORS_ALLOW_CREDENTIALS === 'true'
+  })
+);
 app.use(helmet());
 app.use(express.json());
 app.use(morgan('dev'));
