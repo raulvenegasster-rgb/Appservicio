@@ -20,6 +20,15 @@ ofibowlidg/
 - Interfaz totalmente en español y con branding de ID Global Solutions.
 - Preparado para despliegues rápidos en Vercel (frontend) y Railway (backend + PostgreSQL).
 
+## ¿Qué hago para verlo funcionando?
+
+Si lo único que quieres es **ver el proyecto corriendo** sin tocar código, tienes dos caminos:
+
+1. **Arranque inmediato con Docker Compose** (no instala nada extra en tu sistema).
+2. **Arranque manual** instalando dependencias de frontend y backend por separado.
+
+Ambas opciones se detallan abajo; elige la que te resulte más cómoda.
+
 ## Guía express: descargar, subir a GitHub y desplegar
 
 Si solo quieres tomar el código tal cual, subirlo a tu cuenta de GitHub y después desplegar el frontend en Vercel (manteniendo el backend listo para Railway), sigue estos pasos resumidos:
@@ -74,6 +83,40 @@ Esto dejará disponibles los servicios en:
 - PostgreSQL: localhost:5432 (usuario `ofibowl`, contraseña `ofibowl`, base `ofibowlidg`)
 
 La base de datos se inicializa automáticamente con el esquema definido en `backend/prisma/schema.sql`. Para detener los servicios ejecuta `docker compose down`. Los datos persistirán en el volumen `db-data` mientras no lo elimines (`docker compose down -v`).
+
+## Ejecución manual sin Docker
+
+Si deseas ejecutar cada parte por separado (útil cuando quieres hacer cambios rápidos o no puedes usar Docker), sigue estos pasos:
+
+### 1. Backend (API Express)
+
+```bash
+cd ofibowlidg/backend
+cp .env.example .env               # crea tus variables locales
+psql "postgres://usuario:pass@localhost:5432/postgres" -f prisma/schema.sql   # crea tablas (ajusta la URL a tu PostgreSQL)
+npm install                        # instala dependencias
+npm run dev                        # inicia el servidor en http://localhost:4000/api
+```
+
+- Asegúrate de que `DATABASE_URL` del `.env` apunte a una base PostgreSQL accesible.
+- Si aún no tienes PostgreSQL instalado, puedes instalarlo localmente o usar cualquier servicio alojado y actualizar la URL.
+- El comando `npm run dev` usa `nodemon` para recargar el servidor ante cambios.
+
+### 2. Frontend (React + Vite)
+
+En otra terminal:
+
+```bash
+cd ofibowlidg/frontend
+cp .env.example .env               # apunta VITE_API_URL a tu backend (ej. http://localhost:4000/api)
+npm install                        # instala dependencias del frontend
+npm run dev                        # abre http://localhost:5173 con la app
+```
+
+- El frontend cargará picks, rankings y formularios usando la API que definiste en `VITE_API_URL`.
+- Para cerrar la sesión localmente basta con pulsar el botón de salir; los tokens se guardan en `localStorage`.
+
+Cuando quieras detener ambos servidores, presiona `Ctrl + C` en cada terminal.
 
 ## Configuración del backend
 
